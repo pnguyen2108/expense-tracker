@@ -1,7 +1,7 @@
 export const DashBoards = () => {
     return (
         <>
-        Dashboards
+        This is a placeholder component
         </>
     );
 };

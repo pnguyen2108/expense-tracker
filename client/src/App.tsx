@@ -6,7 +6,7 @@ import { Routers } from "./routes";
 function App() {
     return (
         <>
-            <Header/>
+            <Header />
 
             <Container maxWidth='xl'>
                 <Routers />
