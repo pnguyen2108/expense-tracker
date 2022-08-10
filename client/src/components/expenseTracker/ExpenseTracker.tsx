@@ -1,14 +1,27 @@
 import { Button, Container, styled, TextField, Typography } from "@mui/material";
-import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useAppSelector } from "../../store/hooks/hooks";
+// import { useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useAppDispatch, useAppSelector } from "../../store/hooks/hooks";
 import Box from '@mui/material/Box';
 import { RootState } from "../../store/hooks/store";
+import { addAmount, Amount } from "../../store/reducers/expenseSlice";
+import { useEffect } from "react";
+
+type FormType = {
+    text: string,
+    amount: number;
+};
 
 const defaultValues = {
     text: "",
     amount: 0
 };
+
+const Invalid = styled('p')({
+    color: 'red',
+    fontSize: '16px',
+    margin: "5px 0"
+});
 
 const Expense = styled('div')({
     display: "flex",
@@ -57,10 +70,29 @@ export const ExpenseTracker = () => {
         m: "15px 0"
     };
 
-    const balance = useAppSelector((state: RootState) => state.expense.currentBalance);
-    const { control } = useForm({ defaultValues });
+    const dispatch = useAppDispatch();
+    const { handleSubmit, control, reset, formState: { errors } } = useForm<FormType>({ defaultValues });
+    const store = useAppSelector((state: RootState) => state.expense);
 
-    const [ currentBalance ] = useState<number>(balance);
+    const updateTracker = (type: string) => {
+        return Math.abs(store.history.filter((item: Amount) => item.type === type)
+            .reduce((total, record) => total += +record.amount, 0));
+    };
+
+    const currentBalance = store.currentBalance;
+    const currentIncome = updateTracker('income');
+    const currentExpense = updateTracker('expense');
+
+
+    const onSubmit: SubmitHandler<FormType> = (data) => {
+        dispatch(addAmount(data));
+
+        reset();
+    };
+
+    useEffect(() => {
+        console.log("Hola Amigo");
+    }, []);
 
     return (
 
@@ -73,20 +105,29 @@ export const ExpenseTracker = () => {
             <Expense>
                 <div className="income">
                     <h4>INCOME</h4>
-                    <p className="plus">$110.1</p>
+                    <p className="plus">${currentIncome.toFixed(2)}</p>
                 </div>
                 <div className="expense">
                     <h4>EXPENSE</h4>
-                    <p className="minus">$10</p>
+                    <p className="minus">${currentExpense.toFixed(2)}</p>
                 </div>
             </Expense>
 
             <Box sx={{ width: "100%", height: 300, mt: '20px' }}>
-                <Controller name="text" render={({ field }) => <TextField {...field} label="Text" sx={textFieldSx} fullWidth />} control={control} />
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <>
+                        <Controller name="text" rules={{ required: "required", minLength: { value: 5, message: "min 5" } }} render={({ field }) =>
+                            <TextField error={errors.text ? true : false}  {...field} inputProps={{ maxLength: 100 }} autoFocus label="Text" sx={{}} fullWidth />} control={control} />
+                        <Invalid> {errors.text?.message}</Invalid>
 
-                <Controller name="amount" render={({ field }) => <TextField {...field} label="Amount (negative - expense, positive - income)" type="number" sx={textFieldSx} fullWidth />} control={control} />
+                        <Controller rules={{ validate: { validAmount: (amount: number) => +amount !== 0 || "invalid input" } }} name="amount" render={({ field }) =>
+                            <TextField error={errors.amount ? true : false}  {...field} label="Amount (negative - expense, positive - income)" type="number" sx={textFieldSx} fullWidth />} control={control} />
 
-                <Button variant="contained" color="primary" size="large" sx={{ float: "right" }}>SUBMIT</Button>
+                        <Invalid> {errors.amount?.message}</Invalid>
+                        <Button variant="contained" type="submit" color="primary" size="large" sx={{ float: "right" }}>SUBMIT</Button>
+
+                    </>
+                </form>
             </Box>
 
         </Container>

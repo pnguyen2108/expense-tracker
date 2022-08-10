@@ -1,14 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-
-interface amount {
+export interface Amount {
     text: string,
+    type?:string,
     amount: number;
 }
 
 export interface ExpenseState {
     currentBalance: number;
-    history: amount[];
+    history: Amount[];
 }
 
 const initialState: ExpenseState = {
@@ -21,7 +21,15 @@ export const expenseSlice = createSlice({
     name: 'expense',
     initialState,
     reducers: {
-        addAmount: (state: ExpenseState, action: PayloadAction<amount>) => {
+        addAmount: (state: ExpenseState, action: PayloadAction<Amount>) => {
+            if(action.payload.amount >0) {
+                action.payload.type = 'income';
+            } else {
+                action.payload.type = 'expense';
+            }
+            
+            state.currentBalance += +action.payload.amount;
+
             state.history.push(action.payload);
         }
     }
