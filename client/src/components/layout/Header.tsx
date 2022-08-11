@@ -9,14 +9,13 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import Button from '@mui/material/Button';
 
 const settings = [ 'Profile', 'Account', 'Dashboard', 'Logout' ];
 
 export const Header = () => {
     const sx = {
         mr: 2,
-        flexGrow: 0,
+        flexGrow: 2,
         display: { xs: 'none', md: 'flex' },
         fontFamily: 'monospace',
         fontWeight: 700,
@@ -43,7 +42,7 @@ export const Header = () => {
     };
 
     return (
-        <AppBar position="static" sx={{ padding:"0 50px" }}>
+        <AppBar position="static" sx={{ padding: "0 50px", backgroundColor: '#8a2b06' }}>
             <Toolbar disableGutters>
                 <Typography
                     variant="h6"
@@ -55,16 +54,6 @@ export const Header = () => {
                     MONSTER
                 </Typography>
 
-                <Box sx={{ flexGrow: 2, display: { xs: 'none', md: 'flex' } }}>
-                    <Button href='/' sx={{ my: 2, color: 'white', display: 'block' }}>
-                        Dashboards
-                    </Button>
-
-                    <Button href='/expenses' sx={{ my: 2, color: 'white', display: 'block' }}>
-                        Expense Tracker
-                    </Button>
-
-                </Box>
 
                 <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                     <IconButton
@@ -75,7 +64,7 @@ export const Header = () => {
                         onClick={handleOpenNavMenu}
                         color="inherit"
                     >
-                        <MenuIcon/>
+                        <MenuIcon />
                     </IconButton>
                     <Menu
                         id="menu-appbar"
@@ -109,7 +98,7 @@ export const Header = () => {
                 <Box sx={{ flexGrow: 0 }}>
                     <Tooltip title="Open settings">
                         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                            <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg"/>
+                            <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
                         </IconButton>
                     </Tooltip>
                     <Menu
